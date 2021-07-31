@@ -30,15 +30,17 @@ func AddVegetable(vegiInfo *pb.VegetableInfo) *pb.AddUpdateVegetableResponse {
 	var message string
 	if inventory.VegiEntry == nil {
 		inventory.VegiEntry = make(map[string]*pb.VegetableInfo)
-	} else if inventory.VegiEntry[vegiInfo.Name] != nil {
-		message = "Vegetable already available. Please update"
-		return &pb.AddUpdateVegetableResponse{Message: message}
-	}  else {
 		tempVegiInfo := vegiInfo
 		tempVegiInfo.Amount = float32 (math.Abs(float64(vegiInfo.Amount)))
 		tempVegiInfo.Price = float32 (math.Abs(float64(vegiInfo.Price)))
 		inventory.VegiEntry[vegiInfo.Name] = tempVegiInfo
 		message = "vegetable " + vegiInfo.Name +" added to the inventory."
+	} else if inventory.VegiEntry[vegiInfo.Name] != nil {
+		message = "Vegetable already available. Please update"
+		return &pb.AddUpdateVegetableResponse{Message: message}
+	}  else {
+		message = "Unexpected condition reached."
+		return &pb.AddUpdateVegetableResponse{Message: message}
 	}
 	// [START marshal_proto]
 	out, err := proto.Marshal(inventory)
